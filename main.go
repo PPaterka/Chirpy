@@ -40,15 +40,21 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/app/", http.StripPrefix("/app/", apiCfg.middlewareMetricsInc(http.FileServer(http.Dir(".")))))
-	mux.HandleFunc("GET /admin/metrics", apiCfg.returnHits)
+
 	mux.HandleFunc("POST /admin/reset", apiCfg.resetHits)
+	mux.HandleFunc("GET /admin/metrics", apiCfg.returnHits)
+
 	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+
 	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUser)
-	mux.HandleFunc("POST /api/validate_chirp", chirpVerification)
+
+	mux.HandleFunc("POST /api/chirps", apiCfg.newChirp)
+	mux.HandleFunc("GET /api/chirps", apiCfg.getChirps)
+
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,

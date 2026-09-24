@@ -17,11 +17,11 @@ type User struct {
 }
 
 func (cfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
-	type Parameters struct {
+	type parameters struct {
 		Email string `json:"email"`
 	}
 
-	params := Parameters{}
+	params := parameters{}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&params)
 	if err != nil {
